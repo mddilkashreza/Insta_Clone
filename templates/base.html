@@ -1,0 +1,28 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>
+        {% if title %}
+            {{ title }}
+        {% else %}
+            Insta Clone
+        {% endif %}
+    </title>
+    {% block stylesheet %}
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    {% endblock stylesheet %}
+</head>
+<body>
+    <div class="container">
+        {% block main %}
+
+        {% endblock main %}
+    </div>
+</body>
+        {% block script %}
+        <script src="{% static 'jv/index.js' %}"></script>
+        {% endblock script %}
+</html>
