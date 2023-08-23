@@ -5,7 +5,7 @@
         <span class="navbar-toggler-icon"></span>
       </button>
       <div class="collapse navbar-collapse" id="navbarTogglerDemo01">
-        <a class="navbar-brand" href="{% url 'post:link' %}">Insta Clone</a>
+        <a class="navbar-brand text-danger align-items-center" href="{% url 'post:link' %}"><i class="fa-brands fa-square-instagram  fs-1 text-danger"></i>Clone</a>
         <ul class="navbar-nav me-auto mb-2 mb-lg-0">
           <li class="nav-item">
             <a class="nav-link active" aria-current="page" href="{% url 'post:home' %}">Home</a>
@@ -13,13 +13,24 @@
           <li class="nav-item">
             <a class="nav-link" href="#">Link</a>
           </li>
+          {% if not request.user.is_authenticated %}
           <li class="nav-item">
-            <a class="nav-link" href="#">Sign Up</a>
+            <a class="nav-link" href="{% url 'user:signup' %}">Sign Up</a>
           </li>
+          {% endif %}
+          {% if not request.user.is_authenticated %}
           <li class="nav-item">
-            <a class="nav-link" href="#">LogIn</a>
+            <a class="nav-link" href="{% url 'user:login' %}">LogIn</a>
           </li>
-         
+            {% endif %}
+            {% if request.user.is_authenticated %}
+            <li class="nav-item">
+              <a class="nav-link" href="{% url 'chat:message' %}">Chat</a>
+            </li>
+          <li class="nav-item">
+            <a class="nav-link" href="{% url 'user:logout' %}">logOut</a>
+          </li>
+            {% endif %}
         </ul>
         <div class="d-flex" role="search">
           

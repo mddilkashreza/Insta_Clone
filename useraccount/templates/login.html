@@ -1,0 +1,37 @@
+{% extends 'base.html' %}
+
+{% block main %}
+
+
+<div class="row">
+    <div class="col-sm-12 col-md-4 col-lg-4"></div>
+    <div class="col-sm-12 col-md-4 col-lg-4">
+        <div class="card shodow-sm">
+                    <div class="card-header">
+                        <h2>
+                            Log in
+                            </h2>
+                    </div>
+                    <div class="card-body">
+                        <form method="post">
+                            {% csrf_token %}
+                            {% for message in messages %}
+                            <p class="text-danger">{{ message }}</p>
+                            {% endfor %}
+                            {{ form.as_p }}
+                            <input type="submit" value="submit" class="btn btn-primary w-100">
+                        </form>
+                        <div class="text-center">
+                            <p>  <a href="{% url 'user:signup' %}">New User? Register</a></p>
+                            <p>  <a href="{% url 'post:home' %}">Home</a></p>
+                        </div>
+                    </div>
+        </div>
+       
+    
+    </div>
+    <div class="col-sm-12 col-md-4 col-lg-4"></div>
+</div>
+
+
+{% endblock main %}

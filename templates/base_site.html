@@ -4,31 +4,133 @@
 {% block main %}
 
     {% include 'navbar.html' %}
+    
 
-       
+    {% if messages %}
 
+       {% for message in messages %}
+
+       <div class="alert alert-success">
+            <strong>{{ message }}</strong>
+       </div>
+
+       {% endfor %}
+{% endif %}
        <div class="row mt-2">
         <div class="col-lg-4"></div>
         <div class="col-lg-4">
             {% for post in posts %}
             <div class="card mb-4 mt-2">
                 <div class="card-body">
+                  {% if request.user == post.user %}
+                  <div class="float-end">
+                    <a href="{% url 'post:edit_post' post.id %}" ><i class="fa-regular fa-pen-to-square btn btn-primary "></i></a>
+                    <a data-postid="{{ post.id }}" data-bs-toggle="modal" data-bs-target="#deleteModal" ><i class="fa-solid fa-trash btn btn-danger"></i></a>
+                    
+                  </div>
+                  {% endif %}
                     <img class="w-100" src="{{ post.picture.url }}" alt="" style="height: 60vh;">
                     <p>{{ post.caption }}</p>
                 </div>
                 <div class="card-footer">
-                    <span>Like:1</span>
-                    <span>Comment: 2</span>
+                    <div class="d-inline-block ">
+                  <a href="{% url 'post:like_post' post.id %}" class="text-decoration-none like-post" data-postid="{{post.id}}">
+                    <i class="fa-regular fa-heart"></i>
+                  </a>
+                  <span id="like-{{post.id}}">{{ post.like_count }}</span>
+                    </div>
+                    <div class="float-end">
+                     <a href="{% url 'post:comment_post' post.id %}" class="text-decoration-none">
+                      <i class="fa-regular fa-comment me-2"></i>comment
+                     </a>
+                     {{ post.comment_count }}
+                    </div>
+
+                    <!-- {% if request.user == post.user %}
                     <div class="float-end">
                         <a href="{% url 'post:edit_post' post.id %}" class="btn btn-info sm">Edit</a>
+
+                        <a data-postid="{{ post.id }}" data-bs-toggle="modal" data-bs-target="#deleteModal" class="btn btn-danger sm">delete</a>
                     </div>
+                    {% endif %} -->
                 </div>
             </div>
             {% endfor %}
         </div>
         <div class="col-lg-4"></div>
        </div>
+
+       <!-- Button trigger modal -->
+
+  
+  <!-- Modal -->
+  <div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h1 class="modal-title fs-5" id="exampleModalLabel">Delete Post</h1>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          Are You sure ?
+
+          <form id="del-form" action="{% url 'post:delete_post' %}" method="post">
+              {% csrf_token %}
+              <input type="hidden" id="_post_id" name="post_id"/>
+          </form>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+          <button id="del-btn" href="" type="button" class="btn btn-danger">Delete</button>
+        </div>
+      </div>
+    </div>
+  </div>
     {% block content %}
     {% endblock content %}
 
 {% endblock main %}
+
+
+{% block script %}
+
+{{ block.super }}
+
+ <script type="text/javascript">
+  let modal = document.getElementById("deleteModal");
+  modal.addEventListener("show.bs.modal", function(evt){
+    let btn = evt.relatedTarget;
+    let postid = btn.dataset.postid;
+    console.log(postid)
+    let post_id = document.getElementById("_post_id")
+    post_id.value = postid;
+  });
+
+  let delBtn = document.getElementById("del-btn");
+  delBtn.addEventListener("click", function(){
+    let delForm = document.getElementById("del-form");
+    delForm.submit();
+  })
+
+
+  $(".like-post").click(function(evt){
+    evt.preventDefault();
+    let url = $(this).attr("href");
+    console.log(url);
+    let postid = $(this).data("postid");
+    $.ajax({
+      "url":url,
+      "method": "GET",
+      "dataType": "json",
+      success: function(res){
+        console.log(res);
+        $("#like-"+postid).html(res.like_count);
+      },
+      error:function(res){
+        console.log(res);
+      }
+    });
+  })
+
+ </script>
+{% endblock script %}

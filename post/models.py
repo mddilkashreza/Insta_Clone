@@ -22,6 +22,16 @@ class Post(models.Model):
 
     def __str__(self):
         return str(self.id)
+
+
+    @property
+    def like_count(self):
+        return self.like_set.filter(is_liked=True).count()
+    
+
+    @property
+    def comment_count(self):
+        return self.comment_set.count()
     
 
 

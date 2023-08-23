@@ -1,0 +1,127 @@
+{% extends 'base.html' %}
+
+
+
+
+
+{% block main %}
+
+
+<div class="row">
+   
+    <div class="col-lg-6">
+        <div class="card-body">
+            {% if users %}
+            {% for user in users %}
+                <a href="{% url 'chat:user_chat' user.username %}">{{user.username}}</a> <br>
+            {% endfor %}
+                {%else %}
+                <strong>No users found</strong>
+            {% endif %}
+        </div>
+    </div>
+
+    <div class="col-lg-6">
+            {% if not user_list %}
+        <div class="card">
+            <div class="card-body">
+                {% if messages %}
+                {% for message in messages %}
+                    {% if message.from_user == request.user %}
+                        <div class="float-end text-primary">
+                            <a href="{% url 'chat:delete_message' %}" data-chatid="{{ message.id }}" data-bs-toggle="modal" 
+                            data-bs-target="#deleteModal">{{ message }}<i class="fa-solid fa-trash btn btn-danger"></i></a>
+
+                        </div> <br>
+                        {% else %}
+                        <div class="text-secondary">
+                            {{ message }}
+                        </div>
+                    {% endif %}
+                {% endfor %}
+                {% else %}
+                 <strong>No message found with this user</strong>
+                 {% endif %}
+            </div>
+            <div class="footer">
+                <form method="post">
+                    {% csrf_token %}
+                    {{ form }}
+                    <input type="submit" value="submit">
+                </form>
+            </div>
+        </div>
+
+        {% endif %}
+
+    </div>
+   
+</div>
+
+<div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h1 class="modal-title fs-5" id="exampleModalLabel">Delete Post</h1>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          Are You sure ?
+
+          <form id="del-form" action="{% url 'chat:delete_message' %}" method="post">
+              {% csrf_token %}
+              <input type="text" id="_message_id" name="message_id" />
+          </form>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+          <button id="del-btn" href="" type="button" class="btn btn-danger">Delete</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+{% endblock main %}
+
+{% block script %}
+
+{{ block.super }}
+
+ <script type="text/javascript">
+  let modal = document.getElementById("deleteModal");
+  modal.addEventListener("show.bs.modal", function(evt){
+    let btn = evt.relatedTarget;
+    let messageid = btn.dataset.chatid;
+    console.log(messageid)
+    let message_id = document.getElementById("_message_id")
+    message_id.value = messageid;
+  });
+
+  let delBtn = document.getElementById("del-btn");
+  delBtn.addEventListener("click", function(){
+    let delForm = document.getElementById("del-form");
+    delForm.submit();
+  });
+
+
+//   $(".like-post").click(function(evt){
+//     evt.preventDefault();
+//     let url = $(this).attr("href");
+//     console.log(url);
+//     let postid = $(this).data("postid");
+//     $.ajax({
+//       "url":url,
+//       "method": "GET",
+//       "dataType": "json",
+//       success: function(res){
+//         console.log(res);
+//         $("#like-"+postid).html(res.like_count);
+//       },
+//       error:function(res){
+//         console.log(res);
+//       }
+//     });
+//   })
+
+ </script>
+{% endblock script %}

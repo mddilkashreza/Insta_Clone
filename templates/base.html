@@ -13,6 +13,7 @@
     </title>
     {% block stylesheet %}
     <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <link rel="stylesheet" href="{% static 'css/icons.css' %}">
     {% endblock stylesheet %}
 </head>
 <body>
@@ -23,6 +24,8 @@
     </div>
 </body>
         {% block script %}
-        <script src="{% static 'jv/index.js' %}"></script>
+        <script src="{% static 'jvscript/index.js' %}"></script>
+        <script src="{% static 'jvscript/s.js' %}"></script>
+        <script src="{% static 'jvscript/jquery.js' %}"></script>
         {% endblock script %}
 </html>
